@@ -7,11 +7,11 @@ from setuptools import setup, find_packages
 #with io.open('README.pypi', 'r', encoding='utf-8') as f:
 #    ABOUT = f.read()
 
-NAME = 'Orange3-DicomAnalytics'
+NAME = 'Orange3_Dicom'
 
 MAJOR = 0
 MINOR = 0
-MICRO = 2
+MICRO = 3
 VERSION = '%d.%d.%d' % (MAJOR, MINOR, MICRO)
 
 AUTHOR = 'Chris Lee'
@@ -34,25 +34,25 @@ CLASSIFIERS = [
 KEYWORDS = [
     'orange3 add-on',
     'orange3-imageanalytics'
-    'orange3-dicomanalytics'
+    'orange3-dicom'
 ]
 
 PACKAGES = find_packages()
 
 PACKAGE_DATA = {
-    'orangecontrib.imageanalytics.widgets': ['icons/*.svg'],
-    'orangecontrib.imageanalytics.widgets.tests': ['test_images/*'],
-    'orangecontrib.imageanalytics.tests': ['test_images/*'],
+    'orangecontrib.dicom.widgets': ['icons/*.svg'],
+    'orangecontrib.dicom.widgets.tests': ['test_images/*'],
+    'orangecontrib.dicom.tests': ['test_images/*'],
 }
 
 ENTRY_POINTS = {
     'orange.widgets':
-        ('Image Analytics = orangecontrib.dicomanalytics.widgets',),
+        ('DICOM Image Analytics = orangecontrib.dicom.widgets',),
     'orange3.addon':
-        ('Orange3-Dicomanalytics = orangecontrib.dicomanalytics',),
+        ('Orange3-Dicom = orangecontrib.dicom',),
     # Register widget help
     "orange.canvas.help": (
-        'html-index = orangecontrib.dicomanalytics.widgets:WIDGET_HELP_PATH',)
+        'html-index = orangecontrib.dicom.widgets:WIDGET_HELP_PATH',)
 }
 
 DATA_FILES = [
@@ -75,7 +75,7 @@ def include_documentation(local_dir, install_dir):
 
 
 if __name__ == '__main__':
-    include_documentation('doc/_build/html', 'help/orange3-dicomanalytics')
+    include_documentation('doc/_build/html', 'help/orange3-dicom')
     setup(
         name=NAME,
         version=VERSION,

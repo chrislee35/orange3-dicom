@@ -1,6 +1,6 @@
 from Orange.misc.utils.embedder_utils import EmbedderCache
 from Orange.util import dummy_callback
-from orangecontrib.dicomanalytics.utils.embedder_utils import ImageLoader
+from orangecontrib.dicom.utils.embedder_utils import ImageLoader
 
 
 class LocalEmbedder:

@@ -12,9 +12,9 @@ from Orange.widgets.settings import Setting
 from Orange.widgets.utils.concurrent import ConcurrentWidgetMixin, TaskState
 from Orange.widgets.utils.itemmodels import VariableListModel
 from Orange.widgets.widget import Input, Msg, Output, OWWidget
-from orangecontrib.dicomanalytics.dicom_embedder import \
+from orangecontrib.dicom.dicom_embedder import \
     MODELS as EMBEDDERS_INFO
-from orangecontrib.dicomanalytics.dicom_embedder import DicomEmbedder
+from orangecontrib.dicom.dicom_embedder import DicomEmbedder
 from orangecontrib.imageanalytics.utils.image_utils import filter_image_attributes
 
 

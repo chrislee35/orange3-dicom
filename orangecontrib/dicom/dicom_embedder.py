@@ -5,8 +5,8 @@ from Orange.data import ContinuousVariable, Domain, Table, Variable
 from Orange.misc.utils.embedder_utils import EmbedderCache
 from Orange.util import dummy_callback
 
-from orangecontrib.dicomanalytics.local_embedder import LocalEmbedder
-from orangecontrib.dicomanalytics.server_embedder import ServerEmbedder
+from orangecontrib.dicom.local_embedder import LocalEmbedder
+from orangecontrib.dicom.server_embedder import ServerEmbedder
 from orangecontrib.imageanalytics.squeezenet_model import SqueezenetModel
 from orangecontrib.imageanalytics.utils.image_utils import extract_paths
 

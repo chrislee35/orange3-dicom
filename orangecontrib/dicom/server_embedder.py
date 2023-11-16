@@ -5,7 +5,7 @@ from collections import namedtuple
 
 
 from Orange.misc.server_embedder import ServerEmbedderCommunicator
-from orangecontrib.dicomanalytics.utils.embedder_utils import ImageLoader
+from orangecontrib.dicom.utils.embedder_utils import ImageLoader
 from Orange.util import dummy_callback
 
 from httpx import AsyncClient

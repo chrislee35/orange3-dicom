@@ -41,7 +41,7 @@ from orangecanvas.preview.previewbrowser import TextLabel
 
 from Orange.widgets.utils.signals import Output
 
-from orangecontrib.dicomanalytics.import_dicom import ImportDicom
+from orangecontrib.dicom.import_dicom import ImportDicom
 
 def prettyfypath(path):
     home = os.path.expanduser("~/")
