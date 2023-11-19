@@ -13,6 +13,7 @@ Allows the user to load[1] all images in a directory
 import os
 import fnmatch
 import logging
+import time
 
 from collections import namedtuple
 from types import SimpleNamespace as namespace
@@ -26,6 +27,50 @@ log = logging.getLogger(__name__)
 
 IMG_ATTR_NAME = "image"
 
+DICOM_METADATA_FIELDS = [
+    "AnodeTargetMaterial",
+    "BodyPartExamined",
+    "BodyPartThickness",
+    "ClinicalTrialProtocolName",
+    "ClinicalTrialSiteName",
+    "DetectorDescription",
+    "DetectorType",
+    "DistanceSourceToDetector",
+    "DistanceSourceToPatient",
+    "ExposureInmAs # float",
+    "FilterMaterial",
+    "FilterThicknessMinimum",
+    "FilterType",
+    "FrameTime",
+    "ImageLaterality",
+    "InstitutionalDepartmentName",
+    "InstitutionName",
+    "KVP",
+    "Manufacturer",
+    "Modality",
+    "OrganExposed",
+    "PatientBirthDate",
+    "PatientOrientation",
+    "PatientID",
+    "PatientName",
+    "PatientSex",
+    "PatientSize",
+    "PatientState",
+    "PositionerPrimaryAngle",
+    "PositionerSecondaryAngle",
+    "PositionerType",
+    "PresentationIntentType",
+    "RadiationSetting",
+    "RecommendedViewingMode",
+    "ReferringPhysicianName",
+    "RWavePointer",
+    "StudyDate",
+    "StudyDescription",
+    "StudyID",
+    "StudyInstanceUID",
+    "StudyTime"
+]
+
 class ImportDicom:
     """
     Importing images into a data table. Scripting part.
@@ -38,7 +83,7 @@ class ImportDicom:
         """
     ImgData = namedtuple(
         "ImgData",
-        ["path", "format", "height", "width", "size", "frame"]
+        ["path", "format", "height", "width", "size", "frame", "metadata"]
     )
     ImgData.isvalid = property(lambda self: True)
 
@@ -136,6 +181,11 @@ def scan(topdir, include_patterns=("*",), exclude_patterns=(".*",), case_insensi
 
         yield from (os.path.join(dirpath, fname) for fname in filenames)
 
+def get_attr(img, attr, default=None):
+    try:
+        return getattr(img, attr)
+    except AttributeError:
+        return default
 
 def image_meta_data(path):
     try:
@@ -150,17 +200,19 @@ def image_meta_data(path):
     if hasattr(img, 'NumberOfFrames'):
         numFrames = int(img.NumberOfFrames)
     
+    values = [get_attr(img, x) for x in DICOM_METADATA_FIELDS]
+        
     try:
         st_size = os.stat(path).st_size
     except OSError:
         st_size = -1
         
     if numFrames == -1:
-        yield ImportDicom.ImgData(path, img_format, height, width, st_size, numFrames)
+        yield ImportDicom.ImgData(path, img_format, height, width, st_size, numFrames, values)
         return
         
     for frame in range(numFrames):
-        yield ImportDicom.ImgData(path, img_format, height, width, st_size, frame)
+        yield ImportDicom.ImgData(path, img_format, height, width, st_size, frame, values)
 
 
 def create_table(image_meta, categories=None, start_dir=None):
@@ -191,9 +243,12 @@ def create_table(image_meta, categories=None, start_dir=None):
         height_var.number_of_decimals = 0
         frame_var = Orange.data.ContinuousVariable.make("frame")
         frame_var.number_of_decimals = 0
+        
+        meta_vars = [ Orange.data.StringVariable.make(x) for x in DICOM_METADATA_FIELDS]
+        
         domain = Orange.data.Domain(
             [], [cat_var] if cat_var is not None else [],
-            [imagename_var, image_var, frame_var, size_var, width_var, height_var]
+            [imagename_var, image_var, frame_var, size_var, width_var, height_var] + meta_vars
         )
         cat_data = []
         meta_data = []
@@ -211,7 +266,7 @@ def create_table(image_meta, categories=None, start_dir=None):
                 path = imgmeta.path[len(start_dir)+1:] if start_dir else imgmeta.path
                 path = path.replace(os.path.sep, "/")
                 meta_data.append(
-                    [imgname, path, imgmeta.frame, imgmeta.size, imgmeta.width, imgmeta.height]
+                    [imgname, path, imgmeta.frame, imgmeta.size, imgmeta.width, imgmeta.height, *imgmeta.metadata]
                 )
             else:
                 n_skipped += 1
