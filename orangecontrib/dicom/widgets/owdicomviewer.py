@@ -550,9 +550,16 @@ def loader_local(
         img = pydicom.dcmread(url.toLocalFile())
         _log.debug("Read local: %s", url.toLocalFile())
         try:
-            pa = img.pixel_array[int(frame)]
+            if frame > -1:
+                pa = img.pixel_array[int(frame)]
+            else:
+                pa = img.pixel_array
             shape = pa.shape
-            image = QImage(pa, shape[1], shape[0], QImage.Format_Grayscale8)
+            image_format = QImage.Format_Grayscale8
+            if hasattr(img, 'BitsAllocated'):
+                if img.BitsAllocated == 16:
+                    image_format = QImage.Format_Grayscale16
+            image = QImage(pa, shape[1], shape[0], image_format)
         except Exception as e:
             raise ValueError(e)
         return image

@@ -83,7 +83,12 @@ class ImageLoader:
 
         try:
             img = pydicom.dcmread(file)
-            im = ImageFile.Image.fromarray(img.pixel_array[int(frame)], mode='L')
+            if frame > -1:
+                pa = img.pixel_array[int(frame)]
+            else:
+                pa = img.pixel_array
+                                     
+            im = ImageFile.Image.fromarray(pa, mode='L')
             return im
         except (IOError, ValueError):
             log.warning("Image skipped", exc_info=True)

@@ -146,12 +146,18 @@ def image_meta_data(path):
     
     height = img.Rows
     width = img.Columns
-    numFrames = int(img.NumberOfFrames)
+    numFrames = -1
+    if hasattr(img, 'NumberOfFrames'):
+        numFrames = int(img.NumberOfFrames)
     
     try:
         st_size = os.stat(path).st_size
     except OSError:
         st_size = -1
+        
+    if numFrames == -1:
+        yield ImportDicom.ImgData(path, img_format, height, width, st_size, numFrames)
+        return
         
     for frame in range(numFrames):
         yield ImportDicom.ImgData(path, img_format, height, width, st_size, frame)
