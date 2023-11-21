@@ -279,6 +279,11 @@ def create_table(image_meta, categories=None, start_dir=None):
                 domain, np.empty((len(cat_data), 0), dtype=float),
                 cat_data, meta_data
             )
+            # drop all empty columns
+            df = table.to_pandas_dfs()
+            df2 = df[-1].replace("", np.nan).dropna(axis=1, how='all')
+            df3 = df[0:-1] + (df2,)
+            table = Orange.data.Table.from_pandas_dfs(*df3)
         else:
             # empty results, no images found
             table = Orange.data.Table.from_domain(domain)

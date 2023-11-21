@@ -11,7 +11,7 @@ NAME = 'Orange3_Dicom'
 
 MAJOR = 0
 MINOR = 0
-MICRO = 5
+MICRO = 6
 VERSION = '%d.%d.%d' % (MAJOR, MINOR, MICRO)
 
 AUTHOR = 'Chris Lee'
